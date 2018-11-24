@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form>
+    <input type="text">
+    <input type="button">
+</form>
+</body>
+<script>
+    document.querySelector('input[type=button]').onclick = function(){
+        var xhr = new XMLHttpRequest();
+        xhr.open('post',"http://openapi.tuling123.com/openapi/api/v2");
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhr.onload = function () {
+            var obj = JSON.parse(xhr.responseText);
+        };
+        var obj1 = {};
+        obj1.inputText = {};
+        obj1.inputText.text = document.querySelector('input[type=text]').value;
+        obj1.inputImage = {};
+        obj1.inputImage.url = "";
+        obj1.inputMedia={};
+        obj1.inputMedia.url="";
+        var str1 = JSON.stringify(obj1);
+        var obj2 = {};
+        obj2.apiKey = "aa1544317dd44f01a03fcc0bc515788c";
+        obj2.userId = "ganlubaba";
+        var str2 = JSON.stringify(obj2);
+        xhr.send("perception="+str1+"&userInfo="+str2);
+    };
+
+
+</script>
+</html>
