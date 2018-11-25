@@ -3,36 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        input:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0 1000px #fafafa inset;
+            /*使用足够大的纯色内阴影覆盖谷歌浏览器因为记住密码产生的黄色背景*/
+        }
+        *{
+            margin: 0;
+            padding: 0;
+            border: 0;
+            outline: 0;
+        }
+        .chat{
+            padding-top: 30px;
+            width: 550px;
+            height:600px;
+            background: #fafafa;
+            margin: 50px auto;
+            position: relative;
+            box-shadow: -1px -2px 24px #888888;
+        }
+        .input{
+            border-top: #dedede 1px solid;
+            width: 100%;
+            height: 20%;
+            position: absolute;
+            bottom: 0;
+        }
+        #text{
+            background: #fafafa;
+            display: inline-block;
+            width: 95%;
+            font-size: 20px;
+            padding: 10px 10px;
+            resize: none;
+        }
+        #sub{
+            position: absolute;
+            right: 40px;
+            bottom: 10px;
+            background-color: #dedede;
+            padding: 5px;
+        }
+        ul{
+            overflow-y: auto;
+            width: 100%;
+            height: 70%;
+            padding: 20px 0;
+        }
+        li{
+            display: block;
+            text-align: left;
+            white-space: normal;
+            padding: 10px 20px;
+            list-style: none;
+            width: 80%;
+            /*height: 40px;*/
+            line-height: 40px;
+        }
+        .my{
+            background: #dedede;
+            margin-left: 40px;
+            /*float: right;*/
+        }
+        .he{
+            background: white;
+            margin-left: 30px;
+            /*float:left;*/
+        }
+    </style>
 </head>
 <body>
 <form>
-    <input type="text">
-    <input type="button">
+    <div class="chat">
+        <ul id="chat">
+        </ul>
+        <div class="input">
+            <textarea id="text" cols="50" rows="3"></textarea>
+            <input type="button" id="sub" value="&nbsp;&nbsp;发送&nbsp;&nbsp;" >
+        </div>
+    </div>
 </form>
 </body>
 <script>
-    document.querySelector('input[type=button]').onclick = function(){
+    var text =  document.getElementById('text');
+    var sub = document.querySelector('input[type=button]');
+    var chat = document.getElementById("chat");
+    var ul = document.getElementById("chat");
+    var lisList = ul.getElementsByTagName('li');
+    sub.onclick = function(){
+        addChilds(text.value,"my");
         var xhr = new XMLHttpRequest();
         xhr.open('post',"http://openapi.tuling123.com/openapi/api/v2");
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         xhr.onload = function () {
+          //  console.log(xhr.responseText);
             var obj = JSON.parse(xhr.responseText);
+            var response = obj.results[0].values.text;
+            addChilds(response,"he");
+            text.value="";
         };
-        var obj1 = {};
-        obj1.inputText = {};
-        obj1.inputText.text = document.querySelector('input[type=text]').value;
-        obj1.inputImage = {};
-        obj1.inputImage.url = "";
-        obj1.inputMedia={};
-        obj1.inputMedia.url="";
-        var str1 = JSON.stringify(obj1);
-        var obj2 = {};
-        obj2.apiKey = "aa1544317dd44f01a03fcc0bc515788c";
-        obj2.userId = "ganlubaba";
-        var str2 = JSON.stringify(obj2);
-        xhr.send("perception="+str1+"&userInfo="+str2);
+        var data = {
+            "reqType":0,
+            "perception": {
+            "inputText": {
+                "text":text.value
+            },
+            "inputImage": {
+                "url": "imageUrl"
+            },
+            "selfInfo": {
+                "location": {
+                    "city": "北京",
+                        "province": "北京",
+                        "street": "信息路"
+                }
+            }
+        },
+            "userInfo": {
+            "apiKey": "aa1544317dd44f01a03fcc0bc515788c",
+                "userId": "1232321"
+        }
+        };
+        data = JSON.stringify(data);
+        xhr.send(data);
     };
-
+    function addChilds(str,className) {
+        var message = document.createElement('li');
+        message.className= className;
+        message.innerHTML= str;
+        var n = Math.round(27/str.length)+1;
+        message.style.height = n*40;
+        if(str.length<27){
+            message.style.width = str.length*20+"px";
+            if (className =="my"){
+                message.style.marginLeft = 460-parseInt(message.style.width )+"px";
+            }else {
+                message.style.marginLeft = "35px";
+            }
+        }else {
+            message.style.marginLeft = "35px";
+        }
+        chat.appendChild(message);
+        ul.scrollTop = ul.scrollHeight;
+        message = null;
+    }
 
 </script>
 </html>
