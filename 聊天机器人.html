@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <style>
-        input:-webkit-autofill {
-            -webkit-box-shadow: 0 0 0 1000px #fafafa inset;
-            /*使用足够大的纯色内阴影覆盖谷歌浏览器因为记住密码产生的黄色背景*/
-        }
         *{
             margin: 0;
             padding: 0;
@@ -54,7 +50,6 @@
         li{
             display: block;
             text-align: left;
-            white-space: normal;
             padding: 10px 20px;
             list-style: none;
             width: 80%;
@@ -80,7 +75,7 @@
         </ul>
         <div class="input">
             <textarea id="text" cols="50" rows="3"></textarea>
-            <input type="button" id="sub" value="&nbsp;&nbsp;发送&nbsp;&nbsp;" >
+            <input type="button" id="sub" value="&nbsp;&nbsp;发送&nbsp;&nbsp;"/>
         </div>
     </div>
 </form>
@@ -92,7 +87,8 @@
     var ul = document.getElementById("chat");
     var lisList = ul.getElementsByTagName('li');
     sub.onclick = function(){
-        addChilds(text.value,"my");
+        var str = addChilds(text.value,"my");
+        //ajax部分
         var xhr = new XMLHttpRequest();
         xhr.open('post',"http://openapi.tuling123.com/openapi/api/v2");
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -101,13 +97,12 @@
             var obj = JSON.parse(xhr.responseText);
             var response = obj.results[0].values.text;
             addChilds(response,"he");
-            text.value="";
         };
         var data = {
             "reqType":0,
             "perception": {
             "inputText": {
-                "text":text.value
+                "text":str
             },
             "inputImage": {
                 "url": "imageUrl"
@@ -127,13 +122,12 @@
         };
         data = JSON.stringify(data);
         xhr.send(data);
+        //ajax部分结束
     };
     function addChilds(str,className) {
         var message = document.createElement('li');
         message.className= className;
         message.innerHTML= str;
-        var n = Math.round(27/str.length)+1;
-        message.style.height = n*40;
         if(str.length<27){
             message.style.width = str.length*20+"px";
             if (className =="my"){
@@ -147,7 +141,9 @@
         chat.appendChild(message);
         ul.scrollTop = ul.scrollHeight;
         message = null;
+        var str = text.value;
+        text.value="";
+        return str;
     }
-
 </script>
 </html>
