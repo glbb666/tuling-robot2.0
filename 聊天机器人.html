@@ -87,7 +87,8 @@
     var ul = document.getElementById("chat");
     var lisList = ul.getElementsByTagName('li');
     sub.onclick = function(){
-        var str = addChilds(text.value,"my");
+        var str = text.value;
+        addChilds(str,"my");
         //ajax部分
         var xhr = new XMLHttpRequest();
         xhr.open('post',"http://openapi.tuling123.com/openapi/api/v2");
@@ -140,10 +141,7 @@
         }
         chat.appendChild(message);
         ul.scrollTop = ul.scrollHeight;
-        message = null;
-        var str = text.value;
         text.value="";
-        return str;
     }
 </script>
 </html>
